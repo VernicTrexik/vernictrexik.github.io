@@ -534,6 +534,66 @@
       color: var(--red);
     }
 
+    /* ─── TIMELINE ─── */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--yellow), transparent);
+    }
+    .tl-item {
+      position: relative;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 0.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .tl-item:hover {
+      border-color: rgba(255, 232, 31, 0.4);
+      transform: translateX(4px);
+      box-shadow: 0 4px 20px rgba(255, 232, 31, 0.07);
+    }
+    .tl-dot {
+      position: absolute;
+      left: -1.85rem;
+      top: 1.4rem;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--yellow);
+      box-shadow: 0 0 8px rgba(255, 232, 31, 0.6);
+    }
+    .tl-date {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      margin-bottom: 0.3rem;
+      opacity: 0.7;
+    }
+    .tl-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+    .tl-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
     /* ─── CONTACT ─── */
     #contact { text-align: center; }
     .contact-card {
@@ -820,6 +880,57 @@
       <div class="card-title">The Collection</div>
       <div class="card-text">Not mine. General Grievous's. One Jedi lightsaber, a hubcap, a Soviet-era satellite. More to come. Do not ask about the pull-tab.</div>
     </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- RECENT WORK -->
+<section id="recent">
+  <div class="reveal">
+    <p class="section-label">// Recent Activity</p>
+    <h2 class="section-title">What we've been<br>building lately.</h2>
+    <p class="section-desc">A live log of things General Grievous has constructed, deployed, or broken on my behalf. Updated as we go.</p>
+  </div>
+
+  <div class="timeline reveal">
+
+    <a class="tl-item" href="https://vernictrexik.github.io" target="_blank" rel="noopener">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <div class="tl-date">Mar 3, 2026</div>
+        <div class="tl-title">This Website ↗</div>
+        <div class="tl-desc">Built a Star Wars-themed personal site from scratch. Single HTML file, animated crawl, Spotify widget, the works.</div>
+      </div>
+    </a>
+
+    <a class="tl-item" href="https://spotify-now-playing-inky-five.vercel.app/api/now-playing" target="_blank" rel="noopener">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <div class="tl-date">Mar 3, 2026</div>
+        <div class="tl-title">Spotify Now Playing API ↗</div>
+        <div class="tl-desc">Deployed a Vercel serverless function that pipes live Spotify listening data into the site. See the widget in the bottom-right.</div>
+      </div>
+    </a>
+
+    <a class="tl-item" href="https://github.com/VernicTrexik/spotify-now-playing" target="_blank" rel="noopener">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <div class="tl-date">Mar 3, 2026</div>
+        <div class="tl-title">spotify-now-playing repo ↗</div>
+        <div class="tl-desc">Source code for the Spotify API backend. Node.js serverless function using Spotify OAuth refresh tokens.</div>
+      </div>
+    </a>
+
+    <a class="tl-item" href="https://github.com/VernicTrexik" target="_blank" rel="noopener">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <div class="tl-date">Mar 3, 2026</div>
+        <div class="tl-title">GitHub: VernicTrexik ↗</div>
+        <div class="tl-desc">Renamed GitHub account from Trrexxik → VernicTrexik. All repos and Pages sites migrated automatically.</div>
+      </div>
+    </a>
+
   </div>
 </section>
 
