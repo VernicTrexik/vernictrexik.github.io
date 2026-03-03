@@ -30,137 +30,7 @@
       overflow-x: hidden;
     }
 
-    /* ─── CRAWL OVERLAY ─── */
-    #crawl-overlay {
-      position: fixed;
-      inset: 0;
-      background: #000005;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      overflow: hidden;
-      cursor: pointer;
-    }
 
-    #crawl-overlay .skip {
-      position: absolute;
-      bottom: 2rem;
-      right: 2rem;
-      color: var(--muted);
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      z-index: 10;
-    }
-
-    .crawl-a-long-time {
-      position: absolute;
-      top: 20%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: clamp(0.9rem, 2vw, 1.1rem);
-      color: var(--blue);
-      letter-spacing: 0.1em;
-      white-space: nowrap;
-      animation: fadeInOut 4.5s ease forwards;
-    }
-
-    .crawl-perspective {
-      position: absolute;
-      width: 100%;
-      top: 0;
-      height: 100%;
-      perspective: 250px;
-      perspective-origin: 50% 110%;
-      display: flex;
-      justify-content: center;
-      opacity: 0;
-      animation: revealCrawl 1s 4.5s forwards;
-      overflow: hidden;
-    }
-
-    .crawl-text {
-      position: absolute;
-      top: 110%;
-      width: min(560px, 85vw);
-      text-align: justify;
-      transform-origin: 50% 120%;
-      transform: rotateX(20deg);
-      animation: scroll 120s 4.5s linear forwards;
-      padding-bottom: 20rem;
-    }
-
-    .crawl-episode {
-      color: var(--yellow);
-      font-size: clamp(0.65rem, 1.5vw, 0.85rem);
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      margin-bottom: 0.5rem;
-    }
-
-    .crawl-title {
-      color: var(--yellow);
-      font-size: clamp(1.8rem, 5vw, 3rem);
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      line-height: 1.1;
-      margin-bottom: 2.5rem;
-    }
-
-    .crawl-body {
-      color: var(--yellow);
-      font-size: clamp(0.85rem, 2vw, 1.1rem);
-      line-height: 1.9;
-      text-align: justify;
-    }
-
-    .crawl-body p { margin-bottom: 1.5rem; }
-
-    /* fade top/bottom of crawl */
-    .crawl-perspective::before,
-    .crawl-perspective::after {
-      content: '';
-      position: absolute;
-      left: 0; right: 0;
-      height: 20%;
-      z-index: 2;
-      pointer-events: none;
-    }
-    .crawl-perspective::before {
-      top: 0;
-      background: linear-gradient(to bottom, #000005 0%, transparent 100%);
-    }
-    .crawl-perspective::after {
-      bottom: 0;
-      background: linear-gradient(to top, #000005 0%, transparent 100%);
-    }
-
-    #crawl-overlay.hidden {
-      animation: overlayFade 1.2s ease forwards;
-      pointer-events: none;
-    }
-
-    @keyframes fadeInOut {
-      0%   { opacity: 0; }
-      20%  { opacity: 1; }
-      75%  { opacity: 1; }
-      100% { opacity: 0; }
-    }
-
-    @keyframes revealCrawl {
-      to { opacity: 1; }
-    }
-
-    @keyframes scroll {
-      to { top: -420%; }
-    }
-
-    @keyframes overlayFade {
-      to { opacity: 0; }
-    }
 
     /* ─── STARS ─── */
     #stars {
@@ -734,24 +604,7 @@
 </head>
 <body>
 
-<!-- OPENING CRAWL -->
-<div id="crawl-overlay">
-  <div class="crawl-a-long-time">A long time ago, in a galaxy far, far away&hellip;</div>
-  <div class="crawl-perspective">
-    <div class="crawl-text">
-      <div class="crawl-episode">Episode IV</div>
-      <div class="crawl-title">A New Dev</div>
-      <div class="crawl-body">
-        <p>It is a period of civil unrest. The GALACTIC EMPIRE of boring websites has spread across the internet, crushing creativity under its boot.</p>
-        <p>A lone developer known only as TREXIK has risen from the Fedora-powered wastelands of the Outer Rim, armed with nothing but a terminal, too much RAM, and an unsettling AI assistant.</p>
-        <p>Pursued by agents of mediocrity, Trexik races to deploy a website capable enough to restore style and flair to the galaxy...</p>
-        <p>Meanwhile, somewhere in deep space, a four-armed cyborg general wheezes approvingly from within his collection of stolen lightsabers and miscellaneous space debris.</p>
-        <p>The Force — and the Anthropic API — are with him.</p>
-      </div>
-    </div>
-  </div>
-  <div class="skip">[ click to skip ]</div>
-</div>
+
 
 <canvas id="stars"></canvas>
 
@@ -965,15 +818,7 @@
 </footer>
 
 <script>
-  // ── CRAWL SKIP ──
-  const overlay = document.getElementById('crawl-overlay');
-  function hideCrawl() {
-    overlay.classList.add('hidden');
-    setTimeout(() => overlay.remove(), 1200);
-  }
-  overlay.addEventListener('click', hideCrawl);
-  // auto-hide after crawl finishes (~43s)
-  setTimeout(hideCrawl, 125000);
+
 
   // ── STARFIELD ──
   const canvas = document.getElementById('stars');
