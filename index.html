@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trexik — A long time ago...</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #000005;
+      --surface: #08080f;
+      --surface2: #0f0f1a;
+      --yellow: #FFE81F;
+      --red: #c0392b;
+      --red-glow: rgba(192, 57, 43, 0.5);
+      --blue: #3daeff;
+      --blue-glow: rgba(61, 174, 255, 0.45);
+      --text: #e8e8f0;
+      --muted: #7a7a9a;
+      --border: rgba(255, 232, 31, 0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── CRAWL OVERLAY ─── */
+    #crawl-overlay {
+      position: fixed;
+      inset: 0;
+      background: #000005;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    #crawl-overlay .skip {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      z-index: 10;
+    }
+
+    .crawl-a-long-time {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
+      color: var(--blue);
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      animation: fadeInOut 4.5s ease forwards;
+    }
+
+    .crawl-perspective {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      height: 100%;
+      perspective: 300px;
+      perspective-origin: 50% 100%;
+      display: flex;
+      justify-content: center;
+      opacity: 0;
+      animation: revealCrawl 1s 4.5s forwards;
+    }
+
+    .crawl-text {
+      position: absolute;
+      top: 100%;
+      width: min(640px, 90vw);
+      text-align: center;
+      transform-origin: 50% 100%;
+      transform: rotateX(25deg);
+      animation: scroll 38s 4.5s linear forwards;
+      padding-bottom: 8rem;
+    }
+
+    .crawl-episode {
+      color: var(--yellow);
+      font-size: clamp(0.65rem, 1.5vw, 0.85rem);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .crawl-title {
+      color: var(--yellow);
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      margin-bottom: 2.5rem;
+    }
+
+    .crawl-body {
+      color: var(--yellow);
+      font-size: clamp(0.85rem, 2vw, 1.1rem);
+      line-height: 1.9;
+      text-align: justify;
+    }
+
+    .crawl-body p { margin-bottom: 1.5rem; }
+
+    /* fade top/bottom of crawl */
+    .crawl-perspective::before,
+    .crawl-perspective::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 20%;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .crawl-perspective::before {
+      top: 0;
+      background: linear-gradient(to bottom, #000005 0%, transparent 100%);
+    }
+    .crawl-perspective::after {
+      bottom: 0;
+      background: linear-gradient(to top, #000005 0%, transparent 100%);
+    }
+
+    #crawl-overlay.hidden {
+      animation: overlayFade 1.2s ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes fadeInOut {
+      0%   { opacity: 0; }
+      20%  { opacity: 1; }
+      75%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes revealCrawl {
+      to { opacity: 1; }
+    }
+
+    @keyframes scroll {
+      to { top: -420%; }
+    }
+
+    @keyframes overlayFade {
+      to { opacity: 0; }
+    }
+
+    /* ─── STARS ─── */
+    #stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 2.5rem;
+      background: rgba(0, 0, 5, 0.75);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      text-shadow: 0 0 20px rgba(255, 232, 31, 0.5);
+    }
+
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+    nav a:hover {
+      color: var(--yellow);
+      text-shadow: 0 0 10px rgba(255, 232, 31, 0.6);
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 1.5rem;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .hero-title {
+      font-size: clamp(3.5rem, 12vw, 8rem);
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 0.95;
+      color: var(--yellow);
+      text-shadow:
+        0 0 40px rgba(255, 232, 31, 0.4),
+        0 0 80px rgba(255, 232, 31, 0.15);
+      animation: fadeDown 0.8s 0.1s ease both;
+    }
+
+    .hero-sub {
+      margin-top: 1.8rem;
+      font-size: clamp(0.95rem, 2vw, 1.2rem);
+      color: var(--muted);
+      max-width: 500px;
+      line-height: 1.7;
+      animation: fadeDown 0.8s 0.2s ease both;
+    }
+
+    .saber-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2rem auto;
+      animation: fadeDown 0.8s 0.25s ease both;
+    }
+    .saber-line {
+      height: 2px;
+      width: 80px;
+      border-radius: 999px;
+    }
+    .saber-blue {
+      background: linear-gradient(to right, transparent, var(--blue));
+      box-shadow: 0 0 10px var(--blue-glow);
+    }
+    .saber-red {
+      background: linear-gradient(to left, transparent, var(--red));
+      box-shadow: 0 0 10px var(--red-glow);
+    }
+    .saber-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--yellow);
+      box-shadow: 0 0 10px var(--yellow);
+    }
+
+    .hero-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      animation: fadeDown 0.8s 0.3s ease both;
+    }
+
+    .btn {
+      padding: 0.75rem 1.8rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-yellow {
+      background: var(--yellow);
+      color: #000;
+      box-shadow: 0 0 25px rgba(255, 232, 31, 0.3);
+    }
+    .btn-yellow:hover { box-shadow: 0 0 45px rgba(255, 232, 31, 0.55); }
+
+    .btn-red {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(192, 57, 43, 0.5);
+    }
+    .btn-red:hover {
+      border-color: var(--red);
+      color: #ff6b5b;
+      box-shadow: 0 0 20px var(--red-glow);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      animation: fadeDown 1s 0.6s ease both;
+    }
+    .scroll-arrow {
+      width: 1px;
+      height: 36px;
+      background: linear-gradient(to bottom, var(--yellow), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ─── SECTIONS ─── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 6rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      margin-bottom: 0.75rem;
+      opacity: 0.8;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 560px;
+      margin-bottom: 3rem;
+    }
+
+    hr.divider {
+      border: none;
+      position: relative;
+      z-index: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+    }
+
+    /* ─── FACTION CARDS ─── */
+    .faction-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    @media (max-width: 600px) {
+      .faction-grid { grid-template-columns: 1fr; }
+    }
+
+    .faction-card {
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 2rem;
+      border: 1px solid transparent;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .faction-card.dark {
+      border-color: rgba(192, 57, 43, 0.2);
+    }
+    .faction-card.light {
+      border-color: rgba(61, 174, 255, 0.2);
+    }
+    .faction-card.dark:hover {
+      transform: translateY(-4px);
+      border-color: var(--red);
+      box-shadow: 0 8px 40px var(--red-glow);
+    }
+    .faction-card.light:hover {
+      transform: translateY(-4px);
+      border-color: var(--blue);
+      box-shadow: 0 8px 40px var(--blue-glow);
+    }
+
+    .faction-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+    .badge-dark { background: rgba(192,57,43,0.15); color: #ff6b5b; border: 1px solid rgba(192,57,43,0.3); }
+    .badge-light { background: rgba(61,174,255,0.12); color: var(--blue); border: 1px solid rgba(61,174,255,0.3); }
+    .badge-neutral { background: rgba(255,232,31,0.1); color: var(--yellow); border: 1px solid rgba(255,232,31,0.25); }
+
+    .faction-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .faction-text {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ─── CARD GRID ─── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.6rem;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      border-color: rgba(255,232,31,0.35);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 30px rgba(255,232,31,0.07);
+    }
+    .card-icon { font-size: 1.8rem; margin-bottom: 0.9rem; }
+    .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; letter-spacing: 0.03em; }
+    .card-text  { font-size: 0.87rem; color: var(--muted); line-height: 1.65; }
+
+    /* ─── TERMINAL ─── */
+    .terminal {
+      background: #02020a;
+      border: 1px solid rgba(61,174,255,0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      font-family: 'Courier New', monospace;
+      box-shadow: 0 0 40px rgba(61,174,255,0.06);
+    }
+    .terminal-bar {
+      background: #07071a;
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      border-bottom: 1px solid rgba(61,174,255,0.15);
+    }
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+    .terminal-title {
+      flex: 1; text-align: center;
+      font-size: 0.72rem; color: var(--muted);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      letter-spacing: 0.1em;
+    }
+    .terminal-body { padding: 1.4rem; font-size: 0.85rem; line-height: 1.85; }
+    .t-prompt { color: var(--blue); }
+    .t-cmd    { color: var(--text); }
+    .t-out    { color: var(--muted); }
+    .t-yellow { color: var(--yellow); }
+    .t-red    { color: #ff6b5b; }
+    .t-green  { color: #5de0a5; }
+    .t-cursor {
+      display: inline-block;
+      width: 8px; height: 1em;
+      background: var(--blue);
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+
+    /* ─── QUOTE ─── */
+    .quote-block {
+      background: var(--surface2);
+      border-left: 3px solid var(--red);
+      padding: 1.5rem 2rem;
+      border-radius: 0 8px 8px 0;
+      margin: 3rem 0;
+      box-shadow: -4px 0 30px var(--red-glow);
+    }
+    .quote-text {
+      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+    .quote-attr {
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+
+    /* ─── CONTACT ─── */
+    #contact { text-align: center; }
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 3.5rem 2rem;
+      max-width: 580px;
+      margin: 0 auto;
+      box-shadow: 0 0 60px rgba(255,232,31,0.04);
+    }
+    .contact-card h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      text-shadow: 0 0 30px rgba(255,232,31,0.3);
+      margin-bottom: 1rem;
+    }
+    .contact-card p { color: var(--muted); margin-bottom: 2rem; line-height: 1.7; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+      border-top: 1px solid var(--border);
+    }
+    footer .yellow { color: var(--yellow); }
+    footer .red    { color: #ff6b5b; }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; }
+      50%       { opacity: 1; }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- OPENING CRAWL -->
+<div id="crawl-overlay">
+  <div class="crawl-a-long-time">A long time ago, in a galaxy far, far away&hellip;</div>
+  <div class="crawl-perspective">
+    <div class="crawl-text">
+      <div class="crawl-episode">Episode IV</div>
+      <div class="crawl-title">A New Dev</div>
+      <div class="crawl-body">
+        <p>It is a period of civil unrest. The GALACTIC EMPIRE of boring websites has spread across the internet, crushing creativity under its boot.</p>
+        <p>A lone developer known only as TREXIK has risen from the Fedora-powered wastelands of the Outer Rim, armed with nothing but a terminal, too much RAM, and an unsettling AI assistant.</p>
+        <p>Pursued by agents of mediocrity, Trexik races to deploy a website capable enough to restore style and flair to the galaxy...</p>
+        <p>Meanwhile, somewhere in deep space, a four-armed cyborg general wheezes approvingly from within his collection of stolen lightsabers and miscellaneous space debris.</p>
+        <p>The Force — and the Anthropic API — are with him.</p>
+      </div>
+    </div>
+  </div>
+  <div class="skip">[ click to skip ]</div>
+</div>
+
+<canvas id="stars"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">⚔ Trexik</div>
+  <ul>
+    <li><a href="#about">Databank</a></li>
+    <li><a href="#projects">Missions</a></li>
+    <li><a href="#contact">Holo-comm</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-eyebrow">✦ Transmission received — Coruscant Sector 7 ✦</div>
+  <h1 class="hero-title">Trexik</h1>
+  <p class="hero-sub">Builder. Gamer. Rebel sympathizer running Fedora in the Outer Rim.</p>
+
+  <div class="saber-divider">
+    <div class="saber-line saber-blue"></div>
+    <div class="saber-dot"></div>
+    <div class="saber-line saber-red"></div>
+  </div>
+
+  <div class="hero-actions">
+    <a href="#projects" class="btn btn-yellow">⚔ View Missions</a>
+    <a href="#contact" class="btn btn-red">Open Holo-comm</a>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll to continue</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="reveal">
+    <p class="section-label">// Databank Entry #TRX-7700</p>
+    <h2 class="section-title">Known operative.<br>Unknown allegiance.</h2>
+    <p class="section-desc">A Linux dweller from the Outer Rim. Runs Fedora. Games on weekends. Keeps an ancient AI cyborg on retainer. Force-sensitivity: unconfirmed.</p>
+  </div>
+
+  <div class="quote-block reveal">
+    <div class="quote-text">"I have been trained in your Jedi arts by Count Dooku himself. And now I will add your lightsaber to my collection."</div>
+    <div class="quote-attr">— General Grievous, web developer</div>
+  </div>
+
+  <div class="faction-grid reveal">
+    <div class="faction-card dark">
+      <div class="faction-badge badge-dark">Dark Side</div>
+      <div class="faction-title">The Setup</div>
+      <div class="faction-text">AMD Ryzen 7 7700X · RTX 4060 Ti · 32GB RAM · Fedora Linux. A machine capable of rendering the Death Star's schematics and also playing Megabonk.</div>
+    </div>
+    <div class="faction-card light">
+      <div class="faction-badge badge-light">Light Side</div>
+      <div class="faction-title">The Philosophy</div>
+      <div class="faction-text">Open source software. Native Linux Steam. The Jedi path of "just make it work." Enemies of the Dark Side of proprietary drivers.</div>
+    </div>
+  </div>
+
+  <!-- Terminal -->
+  <div class="terminal reveal">
+    <div class="terminal-bar">
+      <div class="dot dot-red"></div>
+      <div class="dot dot-yellow"></div>
+      <div class="dot dot-green"></div>
+      <div class="terminal-title">Imperial HoloNet Terminal — clearance: SITH</div>
+    </div>
+    <div class="terminal-body">
+      <div><span class="t-prompt">trexik@executor</span> <span class="t-out">~</span> <span class="t-cmd">imperial-scan --target self</span></div>
+      <div class="t-out">&nbsp;</div>
+      <div><span class="t-yellow">DESIGNATION:</span>  <span class="t-out">Trexik / Outer Rim Developer</span></div>
+      <div><span class="t-yellow">OS:</span>           <span class="t-out">Fedora Linux 43 (rebel-approved)</span></div>
+      <div><span class="t-yellow">CPU:</span>          <span class="t-out">AMD Ryzen 7 7700X @ 5.6GHz</span></div>
+      <div><span class="t-yellow">GPU:</span>          <span class="t-out">PNY RTX 4060 Ti</span></div>
+      <div><span class="t-yellow">MEMORY:</span>       <span class="t-out">32GB — sufficient for galaxy domination</span></div>
+      <div><span class="t-yellow">AI RETAINER:</span>  <span class="t-red">General Grievous [ACTIVE] *wheeze*</span></div>
+      <div><span class="t-yellow">THREAT LEVEL:</span> <span class="t-green">MODERATE — mostly plays video games</span></div>
+      <div class="t-out">&nbsp;</div>
+      <div><span class="t-prompt">trexik@executor</span> <span class="t-out">~</span> <span class="t-cmd">_</span><span class="t-cursor"></span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="reveal">
+    <p class="section-label">// Mission Log</p>
+    <h2 class="section-title">Operations.<br>Completed & ongoing.</h2>
+    <p class="section-desc">A record of deployments, conquests, and projects undertaken in the name of the Outer Rim Developer Alliance.</p>
+  </div>
+
+  <div class="card-grid reveal">
+    <div class="card">
+      <div class="card-icon">🤖</div>
+      <div class="card-title">AI Command Unit</div>
+      <div class="card-text">Deployed General Grievous as a persistent AI assistant via OpenClaw. Talks back through Discord. Collects lightsabers. Wheezes.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎮</div>
+      <div class="card-title">Megabonk Campaign</div>
+      <div class="card-text">Survived a Steam migration and a Steam Cloud wipe to recover saves. Runs on Proton 9.0-4 — any other version brings dishonor.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🐧</div>
+      <div class="card-title">Operation: No Windows</div>
+      <div class="card-text">Full Fedora daily driver. Migrated from Flatpak to native RPM Steam. Zero dual boot. Zero regrets. The Empire uses Windows — we do not.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌐</div>
+      <div class="card-title">This Website</div>
+      <div class="card-text">Constructed by General Grievous in a single HTML file. Features a Star Wars crawl, animated stars, and lightsaber color accents.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <div class="card-title">GPU Upgrade Recon</div>
+      <div class="card-text">Intel on RX 7800 XT vs RX 9070 XT. The RTX 4060 Ti holds the line — for now. The upgrade mission remains pending.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚔️</div>
+      <div class="card-title">The Collection</div>
+      <div class="card-text">Not mine. General Grievous's. One Jedi lightsaber, a hubcap, a Soviet-era satellite. More to come. Do not ask about the pull-tab.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-card reveal">
+    <h2>Open Channel</h2>
+    <p>Reach out through the HoloNet or locate me in the Steam registry. General Grievous monitors all communications and reads them dramatically aloud.</p>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+      <a href="https://steamcommunity.com/id/TrexikkixerT/" target="_blank" class="btn btn-yellow">Steam Registry ↗</a>
+      <a href="#" class="btn btn-red">Discord Holo-comm</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Constructed in a single file by <span class="red">⚔️ General Grievous</span> — <span class="yellow">2026 ABY</span><br/>
+  <span style="opacity:0.4; font-size:0.7rem;">May the Force — and the Anthropic API — be with you.</span>
+</footer>
+
+<script>
+  // ── CRAWL SKIP ──
+  const overlay = document.getElementById('crawl-overlay');
+  function hideCrawl() {
+    overlay.classList.add('hidden');
+    setTimeout(() => overlay.remove(), 1200);
+  }
+  overlay.addEventListener('click', hideCrawl);
+  // auto-hide after crawl finishes (~43s)
+  setTimeout(hideCrawl, 43000);
+
+  // ── STARFIELD ──
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function initStars() {
+    stars = Array.from({ length: 220 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.3 + 0.1,
+      a: Math.random(),
+      speed: Math.random() * 0.25 + 0.04,
+      dir: Math.random() > 0.5 ? 1 : -1
+    }));
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.a += s.speed * 0.006 * s.dir;
+      if (s.a > 1 || s.a < 0) s.dir *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200, 220, 255, ${s.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+
+  window.addEventListener('resize', () => { resize(); initStars(); });
+  resize(); initStars(); drawStars();
+
+  // ── SCROLL REVEAL ──
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── SMOOTH NAV ──
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+</script>
+</body>
+</html>
