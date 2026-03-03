@@ -72,23 +72,24 @@
       width: 100%;
       top: 0;
       height: 100%;
-      perspective: 300px;
-      perspective-origin: 50% 100%;
+      perspective: 250px;
+      perspective-origin: 50% 110%;
       display: flex;
       justify-content: center;
       opacity: 0;
       animation: revealCrawl 1s 4.5s forwards;
+      overflow: hidden;
     }
 
     .crawl-text {
       position: absolute;
-      top: 100%;
-      width: min(640px, 90vw);
-      text-align: center;
-      transform-origin: 50% 100%;
-      transform: rotateX(25deg);
-      animation: scroll 70s 4.5s linear forwards;
-      padding-bottom: 8rem;
+      top: 110%;
+      width: min(560px, 85vw);
+      text-align: justify;
+      transform-origin: 50% 120%;
+      transform: rotateX(20deg);
+      animation: scroll 120s 4.5s linear forwards;
+      padding-bottom: 20rem;
     }
 
     .crawl-episode {
@@ -972,7 +973,7 @@
   }
   overlay.addEventListener('click', hideCrawl);
   // auto-hide after crawl finishes (~43s)
-  setTimeout(hideCrawl, 75000);
+  setTimeout(hideCrawl, 125000);
 
   // ── STARFIELD ──
   const canvas = document.getElementById('stars');
